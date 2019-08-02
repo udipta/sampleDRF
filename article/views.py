@@ -1,13 +1,25 @@
-from rest_framework.generics import get_object_or_404
-from rest_framework.response import Response
-from rest_framework.views import APIView
+from rest_framework.generics import get_object_or_404, ListCreateAPIView, RetrieveUpdateDestroyAPIView
 
-from .models import Author, Article
+from .models import Article, Author
 from .serializers import ArticleSerializer
 
 # Create your views here.
 
 
+class ArticleView(ListCreateAPIView):
+    queryset = Article.objects.all()
+    serializer_class = ArticleSerializer
+
+    def perform_create(self, serializer):
+        author = get_object_or_404(Author, id=self.request.data.get('author_id'))
+        return serializer.save(author=author)
+
+
+class SingleArticleView(RetrieveUpdateDestroyAPIView):
+    queryset = Article.objects.all()
+    serializer_class = ArticleSerializer
+
+'''
 class ArticleView(APIView):
     def get(self, request):
         articles = Article.objects.all()
@@ -37,3 +49,4 @@ class ArticleView(APIView):
         article = get_object_or_404(Article.objects.all(), pk=pk)
         article.delete()
         return Response({"message": "Article with id `{}` has been deleted.".format(pk)}, status=204)
+'''
