@@ -21,7 +21,3 @@ urlpatterns = [
     path('', include('article.urls')),
     path('', include('snippet.urls'))
 ]
-
-urlpatterns += [
-    path('api-auth/', include('rest_framework.urls')),
-]

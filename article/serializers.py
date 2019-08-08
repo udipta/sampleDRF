@@ -3,23 +3,28 @@
     to be converted to native Python datatypes that can then be easily
     rendered into JSON, XML or other content types.
 '''
-from django.contrib.auth.models import User
+
 from rest_framework import serializers
 
 from .models import Article
 
 
-class ArticleSerializer(serializers.ModelSerializer):
-    author = serializers.ReadOnlyField(source='author.username')
+class ArticleSerializer(serializers.Serializer):
+    title = serializers.CharField(max_length=120)
+    description = serializers.CharField()
+    body = serializers.CharField()
 
-    class Meta:
-        model = Article
-        fields = ('id', 'title', 'description', 'body', 'author')
+    author_id = serializers.IntegerField()
 
+    def create(self, validated_data):
+        return Article.objects.create(**validated_data)
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
-    articles = serializers.PrimaryKeyRelatedField(many=True, queryset=Article.objects.all())
+    def update(self, instance, validated_data):
+        instance.title = validated_data.get('title', instance.title)
+        instance.description = validated_data.get('description', instance.description)
+        instance.body = validated_data.get('body', instance.body)
+        instance.author_id = validated_data.get('author_id', instance.author_id)
 
-    class Meta:
-        model = User
-        fields = ('id', 'username', 'articles')
+        instance.save()
+
+        return instance
