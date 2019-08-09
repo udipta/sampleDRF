@@ -2,8 +2,9 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Author, Article
+from .models import Article
 from .serializers import ArticleSerializer
+
 
 # Create your views here.
 
