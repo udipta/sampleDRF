@@ -1,20 +1,18 @@
 from django.contrib.auth.models import User
 from rest_framework.decorators import api_view
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView, RetrieveAPIView, GenericAPIView
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
+from rest_framework import generics, permissions, renderers
 
-from article.permissions import IsOwnerOrReadOnly
+from .permissions import IsOwnerOrReadOnly
 from .models import Article
 from .serializers import ArticleSerializer, UserSerializer
-
-from rest_framework import permissions, renderers
 
 
 # Create your views here.
 
 
-class ArticleList(ListCreateAPIView):
+class ArticleList(generics.ListCreateAPIView):
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
@@ -23,18 +21,18 @@ class ArticleList(ListCreateAPIView):
         serializer.save(author=self.request.user)
 
 
-class ArticleDetails(RetrieveUpdateDestroyAPIView):
+class ArticleDetails(generics.RetrieveUpdateDestroyAPIView):
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
 
-class UserList(ListAPIView):
+class UserList(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
 
-class UserDetail(RetrieveAPIView):
+class UserDetail(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
@@ -47,7 +45,7 @@ def api_root(request, format=None):
     })
 
 
-class ArticleHighlight(GenericAPIView):
+class ArticleHighlight(generics.GenericAPIView):
     queryset = Article.objects.all()
     renderer_classes = [renderers.StaticHTMLRenderer]
 
