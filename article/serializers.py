@@ -10,6 +10,7 @@ from .models import Article
 
 
 class ArticleSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
     title = serializers.CharField(max_length=120)
     description = serializers.CharField()
     body = serializers.CharField()
@@ -20,6 +21,7 @@ class ArticleSerializer(serializers.Serializer):
         return Article.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
+        instance.id = validated_data.get('id', instance.id)
         instance.title = validated_data.get('title', instance.title)
         instance.description = validated_data.get('description', instance.description)
         instance.body = validated_data.get('body', instance.body)
